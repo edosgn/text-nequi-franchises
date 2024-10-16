@@ -1,4 +1,4 @@
-package co.com.nequi.model.product;
+package co.com.nequi.model.franchise;
 import lombok.Builder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,9 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class Product {
+public class Franchise {
     private Long id;
     private String name;
-    private int stock;
-    private Long branchId;
 }
