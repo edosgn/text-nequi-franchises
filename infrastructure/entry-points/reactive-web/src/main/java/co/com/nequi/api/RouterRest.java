@@ -32,6 +32,8 @@ public class RouterRest {
     private static final String PATH_FRANCHISE_UPDATE = URL_BASE + "/franchise/{id}";
     private static final String PATH_FRANCHISE_UPDATE_NAME = URL_BASE + "/franchise/name/{id}";
 
+    private static final String PATH_HEALTH = "/health";
+
     @Bean
     public RouterFunction<ServerResponse> routerProduct(ProductHandler productHandler) {
         return route(POST(PATH_PRODUCT_CREATE), productHandler::createProduct)
@@ -60,5 +62,10 @@ public class RouterRest {
                 .andRoute(GET(PATH_FRANCHISES_GET_ALL), franchiseHandler::getAllFranchises)
                 .andRoute(PATCH(PATH_FRANCHISE_UPDATE), franchiseHandler::updateFranchise)
                 .andRoute(PATCH(PATH_FRANCHISE_UPDATE_NAME), franchiseHandler::updateNameFranchise);
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> routerHealth(FranchiseHandler franchiseHandler) {
+        return route(GET(PATH_HEALTH), req -> ServerResponse.ok().bodyValue(true));
     }
 }

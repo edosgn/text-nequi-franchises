@@ -6,7 +6,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'text-nequi-franchises'
+rootProject.name = 'test-nequi-franchises'
 
 include ':app-service'
 include ':model'

@@ -6,7 +6,7 @@ spring:
   main:
     web-application-type: reactive
   application:
-    name: "text-nequi-franchises"
+    name: "test-nequi-franchises"
   devtools:
     add-properties: false
   h2:
@@ -16,9 +16,9 @@ spring:
   profiles:
     include: null
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/franchises_db
+    url: "${R2DBC_URL:r2dbc:postgresql://localhost:5432/test-nequi-franchises}"
     username: postgres
-    password: root
+    password: root.2024
     schema: public
 management:
   endpoints:
