@@ -6,7 +6,7 @@ import reactor.core.publisher.Mono;
 
 public interface FranchiseRepository {
     Flux<Franchise> getAllFranchises();
-    Mono<Void> saveFranchise(Franchise franchise);
+    Mono<Franchise> saveFranchise(Franchise franchise);
     Mono<Franchise> getById(Long id);
     Mono<Void> updateFranchise(Franchise franchise);
 }

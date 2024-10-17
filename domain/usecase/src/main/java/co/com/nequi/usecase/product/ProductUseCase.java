@@ -14,34 +14,49 @@ public class ProductUseCase {
 
     public Mono<Product> saveProduct(Product product) {
         return productRepository.saveProduct(product)
+                .doOnError(e -> System.err.println("Error saving product: " + e.getMessage()))
                 .onErrorMap(e -> new InternalServerErrorException());
     }
 
     public Mono<Product> getProductById(Long id) {
         return productRepository.getProductById(id)
                 .switchIfEmpty(Mono.error(new NotFoundException()))
-                .onErrorMap(e -> new InternalServerErrorException());
+                .doOnError(e -> System.err.println("Error getting product by id: " + e.getMessage()))
+                .onErrorMap(e -> {
+                    if (e instanceof NotFoundException) {
+                        return e;
+                    }
+                    return new InternalServerErrorException();
+                });
     }
 
     public Flux<Product> getAllProducts() {
         return productRepository.getAllProducts()
                 .switchIfEmpty(Mono.error(new NotFoundException()))
-                .onErrorMap(e -> new InternalServerErrorException());
+                .doOnError(e -> System.err.println("Error getting all products: " + e.getMessage()))
+                .onErrorMap(e -> {
+                    if (e instanceof NotFoundException) {
+                        return e;
+                    }
+                    return new InternalServerErrorException();
+                });
     }
 
     public Mono<Product> updateProduct(Product product) {
         return productRepository.updateProduct(product)
+                .doOnError(e -> System.err.println("Error updating product: " + e.getMessage()))
                 .onErrorMap(e -> new InternalServerErrorException());
     }
 
     public Flux<Product> getProductWithMaxStockByBranchId(Long branchId) {
         return productRepository.getProductWithMaxStockByBranchId(branchId)
+                .doOnError(e -> System.err.println("Error getting product with max stock by branch id: " + e.getMessage()))
                 .onErrorMap(e -> new InternalServerErrorException());
     }
 
     public Mono<Void> deleteProduct(Long id) {
         return productRepository.deleteProduct(id)
-                .switchIfEmpty(Mono.error(new NotFoundException()))
+                .doOnError(e -> System.err.println("Error deleting product: " + e.getMessage()))
                 .onErrorMap(e -> new InternalServerErrorException());
     }
 }

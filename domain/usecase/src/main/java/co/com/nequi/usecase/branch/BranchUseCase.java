@@ -15,28 +15,48 @@ public class BranchUseCase {
     public Flux<Branch> getAllBranches() {
         return branchRepository.getAllBranches()
                 .switchIfEmpty(Mono.error(new NotFoundException()))
-                .onErrorMap(e -> new InternalServerErrorException());
+                .doOnError(e -> System.err.println("Error getting all branches: " + e.getMessage()))
+                .onErrorMap(e -> {
+                    if (e instanceof NotFoundException) {
+                        return e;
+                    }
+                    return new InternalServerErrorException();
+                });
     }
 
     public Mono<Branch> saveBranch(Branch branch) {
         return branchRepository.saveBranch(branch)
+                .doOnError(e -> System.err.println("Error saving branch: " + e.getMessage()))
                 .onErrorMap(e -> new InternalServerErrorException());
     }
 
     public Flux<Branch> getBranchesByFranchiseId(Long franchiseId) {
         return branchRepository.getBranchesByFranchiseId(franchiseId)
                 .switchIfEmpty(Mono.error(new NotFoundException()))
-                .onErrorMap(e -> new InternalServerErrorException());
+                .doOnError(e -> System.err.println("Error getting branches by franchise id: " + e.getMessage()))
+                .onErrorMap(e -> {
+                    if (e instanceof NotFoundException) {
+                        return e;
+                    }
+                    return new InternalServerErrorException();
+                });
     }
 
     public Mono<Branch> getById(Long id) {
         return branchRepository.getById(id)
                 .switchIfEmpty(Mono.error(new NotFoundException()))
-                .onErrorMap(e -> new InternalServerErrorException());
+                .doOnError(e -> System.err.println("Error getting branch by id: " + e.getMessage()))
+                .onErrorMap(e -> {
+                    if (e instanceof NotFoundException) {
+                        return e;
+                    }
+                    return new InternalServerErrorException();
+                });
     }
 
     public Mono<Branch> updateBranch(Branch branch) {
         return branchRepository.updateBranch(branch)
+                .doOnError(e -> System.err.println("Error updating branch: " + e.getMessage()))
                 .onErrorMap(e -> new InternalServerErrorException());
     }
 }

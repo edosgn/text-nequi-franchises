@@ -1,8 +1,12 @@
 server:
   port: 8081
+  netty:
+    idle-timeout: 30s
 spring:
+  main:
+    web-application-type: reactive
   application:
-    name: "Franchises"
+    name: "text-nequi-franchises"
   devtools:
     add-properties: false
   h2:
@@ -19,11 +23,26 @@ spring:
 management:
   endpoints:
     web:
+      cors:
+        allowed-origins: "*"
       exposure:
-        include: "health,prometheus"
+        include: "*"
+      base-path: /actuator
   endpoint:
     health:
       probes:
         enabled: true
+      show-details: always
+
 cors:
-  allowed-origins: "http://localhost:4200,http://localhost:8080,http://localhost:8081"
+  allowed-origins: "http://localhost:4200,http://localhost:8081"
+
+
+# Habilitar nivel de log DEBUG para Spring WebFlux y Reactor
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.web.reactive: DEBUG
+    reactor.core.publisher: DEBUG
+    org.springframework.boot.actuate: DEBUG
+    org.springframework.boot.actuate.endpoint.web: DEBUG

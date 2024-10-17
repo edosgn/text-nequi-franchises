@@ -13,8 +13,9 @@ COPY applications/app-service/build/libs/Franchises.jar Franchises.jar
 RUN sh -c 'touch /Franchises.jar'
 
 ENV TZ=America/Bogota
-ENV JAVA_OPTS=" -XX:+UseContainerSupport -XX:MaxRAMPercentage=70 -Djava.security.egd=file:/dev/./urandom"
+ENV JAVA_OPTS=" -Xshareclasses:name=cacheapp,cacheDir=/cache,nonfatal -XX:+UseContainerSupport -XX:MaxRAMPercentage=70 -Djava.security.egd=file:/dev/./urandom"
 
 USER appuser
 ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS  -jar Franchises.jar" ]
+
 

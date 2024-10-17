@@ -22,9 +22,9 @@ public class FranchiseReactiveRepositoryAdapter  implements FranchiseRepository 
     }
 
     @Override
-    public Mono<Void> saveFranchise(Franchise franchise) {
+    public Mono<Franchise> saveFranchise(Franchise franchise) {
         return franchiseReactiveRepository.save(franchiseEntityMapper.toEntity(franchise))
-                .then();
+                .map(franchiseEntityMapper::toDomain);
     }
 
     @Override

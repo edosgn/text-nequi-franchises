@@ -12,25 +12,46 @@ import reactor.core.publisher.Mono;
 public class FranchiseUseCase {
     public final FranchiseRepository franchiseRepository;
 
-    public Flux<Franchise> getAllFranchises() {
-        return franchiseRepository.getAllFranchises()
-                .switchIfEmpty(Mono.error(new NotFoundException()))
+    public Mono<Franchise> saveFranchise(Franchise franchise) {
+        return franchiseRepository.saveFranchise(franchise)
+                .doOnError(e -> System.err.println("Error saving franchise: " + e.getMessage()))
                 .onErrorMap(e -> new InternalServerErrorException());
     }
 
-    public Mono<Void> saveFranchise(Franchise franchise) {
-        return franchiseRepository.saveFranchise(franchise)
-                .onErrorMap(e -> new InternalServerErrorException());
+    public Flux<Franchise> getAllFranchises() {
+        return franchiseRepository.getAllFranchises()
+                .switchIfEmpty(Mono.error(new NotFoundException()))
+                .doOnError(e -> System.err.println("Error getting all franchises: " + e.getMessage()))
+                .onErrorMap(e -> {
+                    if (e instanceof NotFoundException) {
+                        return e;
+                    }
+                    return new InternalServerErrorException();
+                });
     }
 
     public Mono<Franchise> getById(Long id) {
         return franchiseRepository.getById(id)
                 .switchIfEmpty(Mono.error(new NotFoundException()))
-                .onErrorMap(e -> new InternalServerErrorException());
+                .doOnError(e -> System.err.println("Error getting franchise by id: " + e.getMessage()))
+                .onErrorMap(e -> {
+                    if (e instanceof NotFoundException) {
+                        return e;
+                    }
+                    return new InternalServerErrorException();
+                });
     }
 
     public Mono<Void> updateFranchise(Franchise franchise) {
-        return franchiseRepository.updateFranchise(franchise)
-                .onErrorMap(e -> new InternalServerErrorException());
+        return franchiseRepository.getById(franchise.getId())
+            .switchIfEmpty(Mono.error(new NotFoundException()))
+            .flatMap(existingFranchise -> franchiseRepository.updateFranchise(franchise))
+                .doOnError(e -> System.err.println("Error updating franchise: " + e.getMessage()))
+            .onErrorMap(e -> {
+                if (e instanceof NotFoundException) {
+                    return e;
+                }
+                return new InternalServerErrorException();
+            });
     }
 }
