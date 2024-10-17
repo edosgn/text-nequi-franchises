@@ -17,7 +17,7 @@ resource "aws_ecs_task_definition" "app_task" {
   [
     {
       "name": "app-first-task",
-      "image": "${aws_ecr_repository.app_ecr_repo.repository_url}",
+      "image": "${aws_ecr_repository.app_ecr_repo.repository_url}:latest",
       "essential": true,
       "portMappings": [
         {
@@ -32,14 +32,15 @@ resource "aws_ecs_task_definition" "app_task" {
           "CMD-SHELL",
           "curl -f http://localhost:8081/health || exit 1"
         ],
+        "startPeriod": 15,
         "interval": 30,
         "timeout": 5,
-        "retries": 3
+        "retries": 5
       },
       "environment": [
         {
           "name": "R2DBC_URL",
-          "value": "jdbc:postgresql://${aws_db_instance.postgres.address}:5432/franchises_db"
+          "value": "${aws_db_instance.postgres.address}"
         }
       ],
         "logConfiguration": {
@@ -214,5 +215,9 @@ resource "aws_db_instance" "postgres" {
 #Log the load balancer app URL
 output "app_url" {
   value = aws_alb.application_load_balancer.dns_name
+}
+
+output "aws_ecr_repository" {
+  value = aws_ecr_repository.app_ecr_repo.repository_url
 }
 

@@ -6,6 +6,7 @@ import io.r2dbc.pool.ConnectionPoolConfiguration;
 import io.r2dbc.postgresql.PostgresqlConnectionConfiguration;
 import io.r2dbc.postgresql.PostgresqlConnectionFactory;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,14 +18,20 @@ public class PostgreSQLConnectionPool {
     public static final int MAX_IDLE_TIME = 30;
 
 	@Bean
-	public ConnectionPool getConnectionConfig() {
+	public ConnectionPool getConnectionConfig(
+			@Value("${spring.r2dbc.host}") String host,
+			@Value("${spring.r2dbc.database}") String database,
+			@Value("${spring.r2dbc.port}") int port,
+			@Value("${spring.r2dbc.username}") String username,
+			@Value("${spring.r2dbc.password}") String password
+			) {
         // TODO: change these properties for yours
 		PostgresqlConnectionProperties pgProperties = new PostgresqlConnectionProperties();
-		pgProperties.setDatabase("franchises_db");
-		pgProperties.setHost("localhost");
-		pgProperties.setPort(5432);
-		pgProperties.setUsername("postgres");
-		pgProperties.setPassword("root");
+		pgProperties.setDatabase(database);
+		pgProperties.setHost(host);
+		pgProperties.setPort(port);
+		pgProperties.setUsername(username);
+		pgProperties.setPassword(password);
 		pgProperties.setSchema("public");
 
 		return buildConnectionConfiguration(pgProperties);

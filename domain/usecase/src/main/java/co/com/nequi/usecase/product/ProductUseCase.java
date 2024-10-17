@@ -5,8 +5,12 @@ import co.com.nequi.model.exception.NotFoundException;
 import co.com.nequi.model.product.Product;
 import co.com.nequi.model.product.gateways.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 @RequiredArgsConstructor
 public class ProductUseCase {
@@ -33,7 +37,9 @@ public class ProductUseCase {
     public Flux<Product> getAllProducts() {
         return productRepository.getAllProducts()
                 .switchIfEmpty(Mono.error(new NotFoundException()))
-                .doOnError(e -> System.err.println("Error getting all products: " + e.getMessage()))
+                .doOnError(e -> {
+                    System.err.println("Error getting all products: " + e.getMessage());
+                })
                 .onErrorMap(e -> {
                     if (e instanceof NotFoundException) {
                         return e;
@@ -58,5 +64,12 @@ public class ProductUseCase {
         return productRepository.deleteProduct(id)
                 .doOnError(e -> System.err.println("Error deleting product: " + e.getMessage()))
                 .onErrorMap(e -> new InternalServerErrorException());
+    }
+
+    public static String getStackTraceAsString(Exception e) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        return sw.toString();
     }
 }

@@ -16,7 +16,9 @@ spring:
   profiles:
     include: null
   r2dbc:
-    url: "${R2DBC_URL:r2dbc:postgresql://localhost:5432/test-nequi-franchises}"
+    host: "${R2DBC_URL:r2dbc:postgresql://localhost:5432/franchises_db}"
+    database: "${R2DBC_DATABASE:franchises_db}"
+    port: "${R2DBC_PORT:5432}"
     username: postgres
     password: root.2024
     schema: public
